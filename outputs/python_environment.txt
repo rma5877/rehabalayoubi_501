@@ -1,6 +1,0 @@
-Date: 2025-12-30
-Python: 3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]
-Executable: C:\Projects\soda501\.venv\Scripts\python.exe
-Platform: Windows-11-10.0.22621-SP0
-Machine: AMD64
-Processor: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel
