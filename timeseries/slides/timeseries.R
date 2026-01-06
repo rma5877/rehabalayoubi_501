@@ -1,0 +1,472 @@
+# make_week14_slides.R
+# Generates Time Series lecture slides (Time Series Analyses for Social Data)
+
+# Install required packages if not already installed
+if (!requireNamespace("xaringan", quietly = TRUE)) install.packages("xaringan")
+if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown")
+if (!requireNamespace("pagedown", quietly = TRUE)) install.packages("pagedown")
+
+# Write the R Markdown source for the slides
+writeLines(
+  "---
+title: 'Time Series Analyses for Social Data'
+author: 'Jared Edgerton'
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      slideNumberFormat: ''
+---
+
+```{r setup, include=FALSE}
+# Reproducibility for any plots generated inside slides
+set.seed(123)
+```
+
+# Why Time Series Matters
+
+Big social data are often *time-indexed*:
+- Platform logs (daily/weekly metrics)
+- Online experiments (A/B outcomes over time)
+- Economic indicators (APIs, nowcasts)
+- Event data (counts by day)
+- Text streams (topic prevalence over time)
+
+Time structure is not noise.
+
+---
+
+# Time Series vs Panel vs Event Streams
+
+Common structures:
+- **Time series:** one unit tracked over time (national approval, platform KPI)
+- **Panel / TSCS:** many units tracked over time (state-by-week, user-by-day)
+- **Event stream:** irregular events (timestamps; bursts)
+
+The data structure determines the model and validation.
+
+---
+
+# Repeated Sampling Over Time
+
+Common in big social data:
+- repeated cross-sections (new sample each wave; e.g., weekly surveys)
+- rotating panels (some respondents persist; some refresh)
+- rolling cohorts (e.g., new users each week)
+
+Core validity issue:
+- changes in the outcome can reflect **composition change** (who is sampled), not behavior change.
+
+Practical checks:
+- compare marginal distributions of key covariates across waves
+- weight or post-stratify when composition drifts
+- cohort-specific plots (e.g., signup-week cohorts)
+
+---
+
+# Panel Data at Scale (TSCS)
+
+When you have many units tracked over time (state-by-week, user-by-day):
+- two-way structure: unit $i$ and time $t$
+- key advantage: you can control for **unit fixed differences** and **common time shocks**
+
+Typical baseline workflow:
+- unit FE + time FE, clustered SE, and explicit time structure
+
+Pitfalls in big data panels:
+- serial correlation in errors
+- staggered adoption / dynamic effects
+- leakage from using future information in features
+
+---
+
+# Survival / Time-to-Event Outcomes (Retention, Churn)
+
+Big-data experiments often generate survival outcomes:
+- time until churn
+- time until first purchase
+- time until next login
+- time until conversion / event
+
+Key concepts:
+- right censoring (user has not churned yet by end of observation)
+- hazard vs survival curve
+- cohort survival curves (Kaplan–Meier style)
+
+RCT connection:
+- compare survival curves across treatment/control
+- effects can be time-varying (short-run bump vs long-run fade)
+
+---
+
+
+# Survival trend example
+
+.pull-left[
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics('images/survival-analysis-basics.png')
+```
+]
+
+---
+
+# Forecasting vs Causal Timing
+
+Two common goals:
+- **Forecasting:** predict future $Y_{t+h}$ given history
+- **Causal timing:** estimate effect of an intervention at time $t_0$
+
+Big-data experiments often combine both:
+- forecast baseline trend
+- detect treatment effect on top of trend
+
+---
+
+# The Biggest Mistake: Time Leakage
+
+Random train/test splits break time:
+- The model sees the future
+- Evaluation looks unrealistically good
+- Deployment fails
+
+Correct default:
+- train on past, test on future
+- rolling windows / backtesting
+
+---
+
+# A Minimal Time Series DGP
+
+A simple starting point: $Y_t = \\mu_t + \\varepsilon_t$
+
+Trend + autocorrelation: $\\mu_t = \\alpha + \\delta t + \\phi (Y_{t-1}-\\mu_{t-1})$
+
+Key idea: observations are dependent over time.
+
+---
+
+# Decomposition: Trend + Seasonality + Residual
+
+.pull-left[
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics('images/Screenshot-301.png')
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics('images/OIP.jpg')
+```
+]
+
+Takeaway: many ''time series'' patterns are structured (trend + seasonality), not i.i.d. noise.
+
+---
+
+# Visualization: Autocorrelated Trend (Synthetic)
+
+```{r, echo=FALSE}
+T <- 200
+alpha <- 0
+delta <- 0.03
+phi <- 0.7
+sigma <- 1.0
+
+y <- rep(NA, T)
+eps <- rnorm(T, 0, sigma)
+
+y[1] <- alpha + delta*1 + eps[1]
+for (t in 2:T) {
+  mu_t <- alpha + delta*t
+  y[t] <- mu_t + phi*(y[t-1] - (alpha + delta*(t-1))) + eps[t]
+}
+
+plot(y, type='l', lwd=2,
+     main='Synthetic Time Series: Trend + Autocorrelation',
+     xlab='t', ylab='Y_t')
+```
+
+---
+
+# Rolling-Origin Evaluation (Backtesting)
+
+Forecasting should mimic deployment:
+- Fit on $1..t$
+- Predict $t+1$
+- Slide forward and repeat
+
+This produces *many* out-of-sample errors.
+
+---
+
+# Backtesting Example (Train/Test Split Over Time)
+
+```{r, echo=FALSE, out.width='95%'}
+knitr::include_graphics('images/backtesting_frame0.gif')
+```
+
+This is a visual reminder: evaluation must mimic deployment (train on past, test on future).
+
+---
+
+# Visualization: Rolling Windows (Conceptual)
+
+```{r, echo=FALSE, fig.width=11, fig.height=4, out.width='100%'}
+par(mar=c(3,3,2,1))
+
+T <- 60
+train_len <- 30
+h <- 1
+starts <- seq(1, T - train_len - h + 1, by = 5)
+
+ys <- seq(0.85, 0.25, length.out = length(starts))
+
+plot(c(1, T), c(0, 1), type='n', axes=FALSE, xlab='', ylab='',
+     main='Rolling-Origin: Train Window (blue) and Test Point (red)')
+axis(1, cex.axis=1.1)
+
+for (i in seq_along(starts)) {
+  s <- starts[i]
+  e <- s + train_len - 1
+  y <- ys[i]
+  segments(s, y, e, y, lwd=8, col='steelblue')
+  points(e + h, y, pch=19, col='firebrick', cex=1.2)
+}
+
+text(6, 0.95, 'train', col='steelblue', cex=1.1)
+text(T-6, 0.95, 'test', col='firebrick', cex=1.1)
+```
+
+---
+
+# Experiments Measured Over Time
+
+In platform experiments, outcomes are often time series:
+- daily active users
+- retention
+- content consumption
+- clicks / engagement
+
+Big sample sizes do not remove:
+- time trends
+- seasonality
+- instrumentation shifts
+- interference and spillovers
+
+---
+
+# Interrupted Time Series (ITS)
+
+A simple causal timing design:
+- define an intervention time $t_0$
+- compare pre vs post while accounting for trend
+
+$$
+Y_t = \\alpha + \\delta t + \\tau \\mathbf{1}[t \\ge t_0] + \\varepsilon_t
+$$
+
+Placebo checks:
+- fake intervention dates
+- pre-trend diagnostics
+
+---
+
+# ITS Intuition: Level Change vs Trend Change
+
+.pull-left[
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics('images/F1.medium.gif')
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, out.width='100%'}
+knitr::include_graphics('images/Picture3.3.png')
+```
+]
+
+Use these schematics to clarify what ''level change'' and ''trend change'' mean before fitting any model.
+
+---
+
+# Visualization: Intervention on Top of Trend (Synthetic)
+
+```{r, echo=FALSE}
+T <- 200
+t0 <- 120
+alpha <- 0
+delta <- 0.02
+tau <- 2.0
+phi <- 0.6
+sigma <- 1.0
+
+y <- rep(NA, T)
+eps <- rnorm(T, 0, sigma)
+
+y[1] <- alpha + delta*1 + tau*(1 >= t0) + eps[1]
+for (t in 2:T) {
+  mu_t <- alpha + delta*t + tau*(t >= t0)
+  mu_tm1 <- alpha + delta*(t-1) + tau*((t-1) >= t0)
+  y[t] <- mu_t + phi*(y[t-1] - mu_tm1) + eps[t]
+}
+
+plot(y, type='l', lwd=2,
+     main='Interrupted Time Series: Shock at t0',
+     xlab='t', ylab='Y_t')
+abline(v=t0, lty=2, lwd=2, col='firebrick')
+text(t0+5, max(y), 'intervention', col='firebrick', pos=4)
+```
+
+---
+
+# ITS: Observed vs. Fitted vs. Counterfactual
+
+```{r, echo=FALSE, out.width='95%'}
+knitr::include_graphics('images/its-counterfactual-1.png')
+```
+
+---
+
+# Switchback Experiments (Big Data)
+
+When interference is likely (e.g., congestion):
+- randomize by *time blocks* (minutes/hours/days)
+- alternate control/treatment across blocks
+- compare outcomes across blocks
+
+Common in:
+- marketplaces
+- rideshare
+- recommender systems
+
+---
+
+# Visualization: Switchback Assignment (Synthetic)
+
+```{r, echo=FALSE}
+T <- 240
+block <- 20
+tau <- 0.6
+trend <- 0.002*(1:T)
+sigma <- 0.4
+
+assign <- rep(0:1, length.out = ceiling(T/block))
+assign <- rep(assign, each = block)[1:T]
+
+y <- 1.0 + trend + tau*assign + rnorm(T, 0, sigma)
+
+plot(y, type='l', lwd=2,
+     main='Switchback Experiment: Treatment Alternates by Time Block',
+     xlab='t', ylab='metric')
+abline(h=mean(y[assign==0]), col='gray40', lty=2)
+abline(h=mean(y[assign==1]), col='gray10', lty=2)
+
+# Shade treatment blocks
+for (b in seq(1, T, by=block)) {
+  if (assign[b] == 1) {
+    rect(b, par('usr')[3], min(b+block-1, T), par('usr')[4],
+         col=rgb(1,0,0,0.06), border=NA)
+  }
+}
+lines(y, lwd=2)
+legend('topleft', legend=c('control mean','treat mean','treatment blocks'),
+       lty=c(2,2,NA), pch=c(NA,NA,15),
+       col=c('gray40','gray10',rgb(1,0,0,0.2)),
+       bty='n')
+```
+
+---
+
+# Sequential Testing and Peeking
+
+If you monitor outcomes every hour/day:
+- repeatedly testing inflates false positives
+- big $n$ makes tiny fluctuations look 'real'
+
+Controls:
+- pre-specified stopping rules
+- alpha spending / group sequential designs
+- holdout windows
+
+---
+
+# Minimal R Workflow (Forecasting)
+
+````r
+# 1) Sort by time
+df <- df[order(df$date), ]
+
+# 2) Split: past -> future
+train <- subset(df, date < as.Date('2026-01-01'))
+test  <- subset(df, date >= as.Date('2026-01-01'))
+
+# 3) Fit baseline (example)
+fit <- arima(train$y, order = c(1,0,0))
+
+# 4) Forecast and score
+pred <- predict(fit, n.ahead = nrow(test))$pred
+rmse <- sqrt(mean((test$y - pred)^2))
+````
+
+---
+
+# Minimal R Workflow (Experiment Over Time)
+
+````r
+# df has: date, metric, treated_block (0/1)
+
+# Difference in means across time blocks
+ate <- with(df, mean(metric[treated_block==1]) - mean(metric[treated_block==0]))
+
+# Placebo: shift assignment by 1 block (should break alignment)
+df$treated_placebo <- dplyr::lag(df$treated_block)
+ate_placebo <- with(df, mean(metric[treated_placebo==1], na.rm=TRUE) -
+                         mean(metric[treated_placebo==0], na.rm=TRUE))
+````
+
+---
+
+# Documentation and Reproducibility
+
+Time series work is sensitive to:
+- exact time zone
+- aggregation rules (hourly vs daily)
+- missingness imputation
+- leakage (feature windows)
+
+Always log:
+- temporal split rule
+- data snapshot date
+- preprocessing choices
+
+---
+
+# Discussion
+
+- Where does time leakage happen in your own work?
+- Which outcomes are most fragile to instrumentation shifts?
+- When does an A/B test become a time-series problem?
+- What makes a ``good'' placebo for a temporal design?
+",
+"week14_slides.Rmd"
+)
+
+# Render the R Markdown file
+rmarkdown::render(
+  "week14_slides.Rmd",
+  output_format = "xaringan::moon_reader"
+)
+
+# Convert HTML to PDF
+pagedown::chrome_print(
+  "week14_slides.html",
+  output = "week_14_slides.pdf"
+)
+
+# Clean up temporary files
+file.remove("week14_slides.Rmd", "week14_slides.html")
+
+cat("PDF slides have been created as 'week_14_slides.pdf'\n")

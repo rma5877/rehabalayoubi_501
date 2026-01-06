@@ -1,0 +1,287 @@
+\documentclass[letterpaper,11pt]{article}
+%====== Packages =================================================================
+\usepackage{graphicx, xcolor, color}
+\usepackage{booktabs, tabularx, tabulary, multirow, threeparttable}
+\usepackage{amsmath, amsthm, amssymb, amsfonts, bm, dcolumn}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\usepackage[hang]{subfigure}
+\usepackage{setspace}
+\usepackage[colorlinks=true, urlcolor={blue}, citecolor={blue}, linkcolor={red}]{hyperref}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{vmargin}
+\usepackage{rotating}
+\newcommand{\R}{\texttt{R}}
+\newcommand{\compresslist}{
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage[nobiblatex]{xurl}
+
+%====== Set Margins =================================================================
+\setpapersize{USletter}
+\setmarginsrb{1.0in}{1.0in}{1.0in}{0.40in}{0in}{0in}{0in}{0.6in}
+
+\begin{document}
+
+\begin{center}
+\begin{Large} Syllabus for SODA 501-002 \end{Large}\\
+\begin{large} Big Social Data: Approaches and Issues (Penn State) \end{large}\\
+\begin{large} Spring 2026 (Regular Session) \end{large}
+\end{center}
+
+\noindent \textbf{Instruction Mode:} In Person\\
+\noindent \textbf{Campus/Location:} 124 Pond\\
+\noindent \textbf{Meeting Time:} Thursdays, 12:00--3:00 pm\\
+\noindent \textbf{Meeting Dates (session window):} 01/12/2026 -- 05/01/2026 \\
+\noindent \textbf{First/Last Thursday meeting:} 01/15/2026 -- 04/30/2026\\
+\noindent \textbf{Credits:} 3\\\bigskip
+
+\noindent \textbf{Instructor:} Jared Edgerton\\
+\noindent \textbf{Email:} \href{mailto:jfe4@psu.edu}{jfe4@psu.edu}\\
+\noindent \textbf{Office:} Carpenter 513
+\\
+\noindent \textbf{Office Hours:} Tuesdays 12:00 to 4:00 and by appointment\\\medskip
+
+\noindent \textbf{Administrative note:} If you are attempting to enroll in \textbf{SODA 502}, please contact Mady Forsythe (\href{mailto:mjf6218@psu.edu}{mjf6218@psu.edu}).\\
+
+\section*{Course Description}
+SODA 501 introduces core approaches and issues in \textbf{big social data}, emphasizing the tools and practices by which social data are created, collected, curated, linked, documented, and shared. ``Social'' data include data about (or arising from) human interactions, including text, network, spatial, audio/video, sensor, and platform-generated data, often at scales or levels of complexity that strain conventional social-science workflows.
+
+\medskip
+\noindent \textbf{Course format.} Each class meeting follows a consistent structure (with a short break/transition built in):
+\begin{enumerate}
+\compresslist
+\item \textbf{Research talk (60 min):} an outside speaker presents their research and workflow.
+\item \textbf{Coding lab (80 min):} a designated student \textbf{Lab Lead} runs an instructor-prepared coding demonstration and guided exercises.
+\item \textbf{Paper discussion (40 min):} we discuss a social-science article that uses the week's tool/method.
+\end{enumerate}
+
+\noindent \textbf{Pre-class video.} For each week, students must watch a \textbf{20--40 minute video} (posted on Canvas) before class. The video introduces concepts and sets up the coding lab.
+
+\section*{Student Learning Objectives}
+By the end of the course, students will be able to:
+\begin{enumerate}
+\item Identify major sources and modalities of big social data (text, network, spatial, digital trace, administrative).
+\item Build end-to-end data pipelines: acquisition $\rightarrow$ storage $\rightarrow$ cleaning $\rightarrow$ linkage $\rightarrow$ documentation.
+\item Implement core tooling in \textbf{Python or R} (plus SQL and Git) for scalable data work.
+\item Evaluate social-science research that uses big social data, with attention to validity, ethics, and reproducibility.
+\item Communicate across disciplines by engaging research speakers and translating methods across domains.
+\end{enumerate}
+
+\section*{Required Tools}
+\begin{itemize}
+\compresslist
+\item A laptop capable of running Python and/or R.
+\item Git + a GitHub account.
+\item Access to Penn State Canvas for videos, announcements, and submissions.
+\item Optional (helpful): Docker/Podman, a cloud account (AWS/GCP/Azure), or PSU computing resources (if available).
+\end{itemize}
+
+\section*{Tooling Choice (Python vs R) and Repository Standards}
+Students may complete coding work in \textbf{Python or R}. You may switch languages during the semester, but each assignment must be fully reproducible in the language you choose for that assignment.
+
+\medskip
+\noindent \textbf{Baseline requirements for all submissions:}
+\begin{itemize}\compresslist
+\item A clean, reproducible project structure (at minimum: \texttt{/data\_raw}, \texttt{/data\_processed}, \texttt{/src}, \texttt{/docs}).
+\item A short \texttt{README} describing: (i) the data source and access method, (ii) how to run the code end-to-end, and (iii) what outputs are produced.
+\item Clear provenance notes: where the data came from, when it was collected, and any known limitations.
+\end{itemize}
+
+\medskip
+\noindent \textbf{Recommended defaults:}
+\begin{itemize}\compresslist
+\item Python: \texttt{uv} or \texttt{conda} environment + \texttt{requirements.txt} (or \texttt{pyproject.toml}).
+\item R: \texttt{renv} lockfile.
+\item Optional (best practice): containerize with Docker/Podman for ``one command'' reproduction.
+\end{itemize}
+
+\section*{Evaluation (Grading)}
+Your final grade will be based on:
+
+\begin{itemize}
+\compresslist
+\item \textbf{Participation and in-class engagement (10\%)} \\
+Includes Q\&A with speakers, active contribution during coding lab, and substantive participation in article discussion. Participation also includes serving as an \textbf{Article Discussion Lead} at least once during the semester (graded; see below).
+
+\medskip
+\noindent \textbf{Article Discussion Lead (graded as part of participation).} Each student will serve as \textbf{Discussion Lead} for at least one class session (more if enrollment requires). The Discussion Lead will:
+\begin{enumerate}\compresslist
+\item Submit a short discussion memo (bullet points) by \textbf{12:00 pm the day before class} that includes: (i) the paper's main claim, (ii) the identification/measurement strategy, and (iii) one key limitation or alternative interpretation.
+\item Provide 3--5 discussion questions, including at least one question about data provenance/measurement and at least one question about the computational workflow.
+\item Facilitate the in-class discussion and ensure the conversation connects the paper to the week's tool and validity threats.
+\end{enumerate}
+
+\item \textbf{Weekly coding labs / assignments (30\%)} \\
+Short deliverables demonstrating the week’s tool (code + brief README).
+
+\item \textbf{Student-led coding demo (20\%)} \\
+Each student will serve as \textbf{Lab Lead} for at least one class session (more if enrollment requires). The Lab Lead will:
+\begin{enumerate}\compresslist
+\item Meet with the instructor \textbf{before class} (typically 30--60 minutes, scheduled during the prior week) to review the instructor-prepared demo code.
+\item Rehearse the live walkthrough and confirm the demo runs on a clean environment.
+\item Lead the in-class coding demonstration and handle questions, with the instructor as backup.
+\item Submit a short post-class note (bullet points) describing what worked, what broke, and how it was fixed.
+\end{enumerate}
+\noindent \textbf{Lab Lead and Discussion Lead assignments} will be posted after Week 1 on Canvas.
+
+\item \textbf{Final project (40\%)} \\
+presentation (15\%), final repo + writeup (25\%).
+\end{itemize}
+
+\noindent \textbf{Letter grades.} I will use the following thresholds: A (93--100), A-- (90--92.9), B+ (87--89.9), B (83--86.9), B-- (80--82.9), C+ (77--79.9), C (70--76.9), D (60--69.9), F (<60).
+
+\section*{Academic Integrity}
+Penn State expects students to complete all coursework in accordance with course-specific rules and university policy on academic integrity. Unless explicitly permitted, you must not submit work that is not your own, and you must not assist others in ways that violate course rules. When in doubt, ask before submitting.
+
+\section*{Students with Disabilities}
+Penn State welcomes students with disabilities into the University's educational programs. If you anticipate needing accommodations, contact Student Disability Resources (SDR) early in the semester and provide the instructor with the approved accommodation letter as soon as it is available.
+
+\section*{Course Norms}
+Be professional and collaborative. This course is designed to be challenging. The goal is to build durable, transferable workflows---not just to ``get it to run.''
+
+\section*{Course Schedule (Spring 2026 --- Thursdays)}
+\noindent \textbf{Key dates:} Spring Break week is Mar 8--14 (no class Thu Mar 12). \\
+\noindent \textbf{Readings/videos:} Posted on Canvas; the ``application paper(s)'' is discussed during the last 30 minutes.
+
+\subsection*{Week 1: January 15, 2026 --- Course Overview \& What is ``Big Social Data''?}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Course toolchain setup (Python/R environment, Git/GitHub, repo structure).
+\item \textbf{Application paper:} Lazer et al. (2009) ``Computational Social Science'' (Science) \emph{or} instructor-selected modern replication.
+\item \textbf{Pre-class video:} Workflow overview + reproducible project scaffolding.
+\end{itemize}
+
+\subsection*{Week 2: January 22, 2026 --- The Web as Data (Scraping \& HTML)}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Scraping with \texttt{BeautifulSoup}/\texttt{requests} (Python) or \texttt{rvest} (R); respectful scraping; pagination.
+\item \textbf{Application paper:} Brown et al. (2025) Big Data and Society.
+\item \textbf{Application paper:} Mahdavi, P. (2017) PSRM
+\item \textbf{Pre-class video:} Web scrapping overview.
+\end{itemize}
+
+\subsection*{Week 3: January 29, 2026 --- APIs, Rate Limits, and Data Collection at Scale}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} API auth; pagination; retries; logging; storing raw JSON.
+\item \textbf{Application paper:} Bail et al. (2018) PNAS
+\item \textbf{Application paper:} Barbeta, P. (2015) Political Analysis
+\item \textbf{Pre-class video:} API design patterns + data provenance.
+\end{itemize}
+
+\subsection*{Week 4: February 5, 2026 --- Surveys, Platforms, and Crowdsourcing}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Survey exports; cleaning; codebooks; labeling; quality checks.
+\item \textbf{Application paper:} Berinsky et al. (2012) Political Analysis
+\item \textbf{Application paper:} Bisbee (2024) Political Analysis
+\item \textbf{Pre-class video:} Data quality, missingness, and measurement in platform data.
+\end{itemize}
+
+\subsection*{Week 5: February 12, 2026 --- Databases \& SQL for Social Data}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} SQL basics; schema design; indexes; joins; using \texttt{duckdb}/\texttt{sqlite}; query from Python/R.
+\item \textbf{Application paper:} Baumgartner et al. (2020) Proceedings of the international AAAI conference on web and social media.
+\item \textbf{Application paper:} Green et al. (2025) APSR.
+\item \textbf{Pre-class video:} Relational thinking + query optimization basics.
+\end{itemize}
+
+\subsection*{Week 6: February 19, 2026 --- Record Linkage and Entity Resolution}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} String distances; blocking; probabilistic linkage; evaluation.
+\item \textbf{Application paper:} Ornstein, J. (2025) Political Analysis
+\item \textbf{Application paper:} Nyseth Nzitatira et al. (2024) ASR
+\item \textbf{Application paper:} Nyseth Nzitatira et al. (2022) JPR (optional)
+\item \textbf{Pre-class video:} Linkage as measurement + error tradeoffs.
+\item \textbf{Milestone:} Final project proposal due.
+\end{itemize}
+
+\subsection*{Week 7: February 26, 2026 --- Text as Data Pipelines}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Tokenization; embeddings; topic models; basic transformer workflow (lightweight).
+\item \textbf{Application paper:} Alsarra et al. (2025) Computational and Mathematical Organization Theory
+\item \textbf{Application paper:} Burnham et al. (2025) Political Analysis
+\item \textbf{Pre-class video:} Practical text pipeline architecture.
+\end{itemize}
+
+\subsection*{Week 8: March 5, 2026 --- Network Data \& Graph Workflows}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Graph construction; centrality; community detection; scalability tips.
+\item \textbf{Application paper:} Minhas, S \& P. Hoff (2025) Political Analysis
+\item \textbf{Application paper:} Olivella et al. (2022) JAS
+\item \textbf{Pre-class video:} Network representation choices and pitfalls.
+\end{itemize}
+
+\subsection*{March 12, 2026 --- \textit{No Class (Spring Break Week)}} 
+
+\subsection*{Week 9: March 19, 2026 --- Spatial Data, GIS, and Remote Sensing}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} \texttt{sf}/\texttt{GeoPandas}; joins; rasters; mapping; basic spatial features.
+\item \textbf{Application paper:} Harari, M. (2020) AER
+\item \textbf{Application paper:} Panagopoulos et al. (2023) Land
+\item \textbf{Pre-class video:} Spatial data formats + coordinate systems.
+\end{itemize}
+
+\subsection*{Week 10: March 26, 2026 --- Reproducibility: Git, Containers, and Research Artifacts}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Git branching; pull requests; Docker/containers; environment capture; data documentation.
+\item \textbf{Application paper:} Heath, Davidson, et al. (2023) The Journal of Finance
+\item \textbf{Application paper:} Holzmeister,et al. (2025) Nature Human Behaviour
+\item \textbf{Pre-class video:} Reproducible pipelines end-to-end.
+\end{itemize}
+
+\subsection*{Week 11: April 2, 2026 --- Data Quality, Labeling, and Validation}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Validation checks; inter-coder reliability; basic monitoring; documenting limitations.
+\item \textbf{Application paper:} Lazer et al. (2014) Science
+\item \textbf{Application paper:} Parkinson, S. (2024) APSR
+\item \textbf{Application paper:} Sales et al. (2022) Applied Geography
+\item \textbf{Pre-class video:} Validity threats in big social data.
+\end{itemize}
+
+\subsection*{Week 12: April 9, 2026 --- LLM-Assisted Data Extraction (Human-in-the-Loop)}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Structured extraction from messy text using LLMs; prompt design for schemas; batch processing; uncertainty checks; human validation/spot-audits; documenting failure modes.
+\item \textbf{Application paper:} Gilardi et al. (2023) PNAS
+\item \textbf{Application paper:} Heseltine, M. \& Bernhard Clemm von Hohenberg. (2024) Research \& Politics
+\item \textbf{Pre-class video:} LLM extraction patterns + evaluation (precision/recall, auditing).
+\end{itemize}
+
+\subsection*{Week 13: April 16, 2026 --- RCTs and Large Experiments (Design + Implementation at Scale)}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Randomization checks; blocking/stratification; power; clustered designs; analysis of ATE; logging and reproducibility for large experiments.
+\item \textbf{Application paper:} Instructor-selected large-scale field or platform experiment (to be posted on Canvas).
+\item \textbf{Application paper:} Bond et al. (2012) Nature; Allcott et al. (2020) AER.
+\item \textbf{Pre-class video:} RCT design basics + practical issues at scale (interference, spillovers, compliance, clustered assignment).
+\end{itemize}
+\subsection*{Week 14: April 23, 2026 --- Time Series Analyses for Social Data}
+\begin{itemize}\compresslist
+\item \textbf{Coding lab:} Time-indexed data cleaning; temporal splits; forecasting vs causal timing; ARIMA/ETS baselines; evaluation under temporal cross-validation.
+\item \textbf{Application paper:} Chen et al. (2022) PA; Park and Yamauchi (2022) PA.
+\item \textbf{Pre-class video:} Time series workflow design + leakage pitfalls (temporal validation, rolling windows, backtesting).
+\end{itemize}
+\subsection*{Week 15: April 30, 2026 --- Student Project Presentations \& Wrap-Up}
+\begin{itemize}\compresslist
+\item \textbf{Deliverable:} 20 minute presentation + demo of repo/pipeline.
+\end{itemize}
+\section*{Final Project}
+\textbf{Goal:} Build a reproducible pipeline that produces (or substantially augments) a ``big social data'' asset relevant to your research interests (text, network, spatial, platform trace, administrative, etc.).
+
+\medskip
+\noindent \textbf{Minimum components:}
+\begin{itemize}\compresslist
+\item You can coauthor the paper. 
+\item A clearly documented data source (provenance) and collection strategy.
+\item A reproducible pipeline (scripts/notebooks + README) that runs end-to-end.
+\item Basic validation checks (at least two) and a short writeup describing limitations.
+\item A shareable research artifact: a GitHub repo with instructions to reproduce outputs.
+\end{itemize}
+
+\medskip
+\noindent \textbf{Milestones:}
+\begin{itemize}\compresslist
+\item \textbf{Presentation:} Week 15.
+\item \textbf{Final submission:} Due \textbf{Friday, May 8, 2026}, 5:00 pm ET (end of finals week).
+\end{itemize}
+
+\end{document}
