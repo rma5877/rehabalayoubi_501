@@ -80,7 +80,7 @@
 
 import os
 import sys
-import platformls
+import platform
 
 import logging
 from datetime import datetime
@@ -88,6 +88,13 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+
+logging.info("platform module file: " + str(platform.__file__))
+logging.info("python executable: " + str(sys.executable))
+logging.info("python version: " + str(sys.version))
+logging.info("os/platform summary: " + str(platform.platform()))
+
 
 # Python dependency management:
 # - Create requirements.txt after everything runs:
