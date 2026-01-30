@@ -129,11 +129,18 @@ log_info("Starting analysis pipeline")
 # Expected location for this assignment:
 # - data/raw/education_income.csv
 
+file_path <- "data/raw/education_income.csv"
+
+education_income <- read.csv(file_path, stringsAsFactors = FALSE)
+
+
 log_info("Loading education/income dataset from data/raw/education_income.csv")
 
+education_income_raw <- education_income
 
 log_info(paste("Rows loaded:", nrow(education_income_raw)))
 log_info(paste("Columns loaded:", ncol(education_income_raw)))
+
 
 # In many projects, "raw" is treated as read-only and comes from outside.
 # Here we re-write it to confirm the exact file used in the run.
