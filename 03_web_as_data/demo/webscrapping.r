@@ -349,3 +349,4 @@ median_cites <- citation_df %>%
   summarize(median_cites = median(cites, na.rm = TRUE), .groups = "drop")
 
 print(median_cites)
+
