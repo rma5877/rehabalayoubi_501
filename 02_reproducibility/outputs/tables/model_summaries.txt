@@ -1,0 +1,67 @@
+Model 1
+
+Call:
+lm(formula = f1, data = education_income)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-106748  -38179  -17233    8170  461604 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   156079      24681   6.324 8.79e-09 ***
+education     -17683       7361  -2.402   0.0183 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 88860 on 93 degrees of freedom
+Multiple R-squared:  0.05843,	Adjusted R-squared:  0.0483 
+F-statistic: 5.771 on 1 and 93 DF,  p-value: 0.01828
+
+
+
+Model 2
+
+Call:
+lm(formula = f2, data = education_income)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-121542  -45535  -11745   15735  408456 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    28355      43783   0.648 0.518848    
+education     -39617       9432  -4.200 6.15e-05 ***
+age             5337       1548   3.449 0.000852 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 84070 on 92 degrees of freedom
+Multiple R-squared:  0.1662,	Adjusted R-squared:  0.1481 
+F-statistic:  9.17 on 2 and 92 DF,  p-value: 0.0002337
+
+
+
+Model 3
+
+Call:
+lm(formula = f3, data = education_income)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-106871  -46209  -15252   23927  401237 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)     7851      47028   0.167 0.867780    
+education     -38765       9439  -4.107 8.75e-05 ***
+age             5493       1550   3.544 0.000625 ***
+sexMale        20957      17783   1.179 0.241664    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 83890 on 91 degrees of freedom
+Multiple R-squared:  0.1787,	Adjusted R-squared:  0.1517 
+F-statistic: 6.602 on 3 and 91 DF,  p-value: 0.0004365
+
