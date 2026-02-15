@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, graphicx, hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\usepackage[margin=1in]{geometry}
+
+\title{ Network analysis}
+\author{ }
+\date{ }
+
+
+\begin{document}
+\maketitle
+
+\noindent \textbf{Note on data.} This problem set uses \textbf{synthetic} (simulated) network data generated in the provided Python tutorial script. The goal is to practice network workflows (construction, centrality, communities, and GNN-style node classification)---not to draw substantive inferences about real-world actors.
+
+\section*{Conceptual Questions}
+Please write three to ten sentence explanations for each of the following questions. \textbf{You are only required to answer ONE of the two questions below.} \bigskip
+ 
+\begin{enumerate}
+
+\item Networks require representation choices (directed vs.\ undirected, weighted vs.\ unweighted, missing edges vs.\ absent edges, handling isolates). Choose \textbf{two} representation choices and explain how each could change a downstream result in this lab (e.g., centrality rankings, community detection, or node classification). Use one concrete example for each.
+
+\item Graph neural networks (GNNs) combine node features and network structure via message passing. Explain, conceptually, why using the graph can improve prediction beyond a feature-only model. Then identify one way a GNN can \emph{fail} or mislead in social science settings (e.g., homophily-driven overconfidence, label leakage, missing data, boundary specification).
+
+  \end{enumerate}
+
+
+\section*{Applied Exercises}
+Use the code in the week's code tutorial and the lecture slides to answer the following questions.\bigskip
+
+  \begin{enumerate}
+  \setcounter{enumi}{2}
+
+\item \textbf{Graph construction + centrality.}
+Using the provided Python script:
+\begin{itemize}
+  \item Generate the synthetic stochastic block model (SBM) network and save (or print) a basic summary: number of nodes, number of edges, and density.
+  \item Create an edge list (\texttt{u}, \texttt{v}) and reconstruct the graph from the edge list.
+  \item Compute three centrality measures:
+  \begin{enumerate}
+    \item degree (or degree centrality),
+    \item approximate betweenness centrality (using sampling),
+    \item eigenvector centrality.
+  \end{enumerate}
+  \item Create \textbf{one} figure that shows the distribution of each centrality measure (three histograms is fine).
+  \item Report the top 10 nodes under each measure and briefly discuss (4--8 sentences): do the rankings agree? What kind of ``importance'' does each metric capture in this synthetic network?
+\end{itemize}
+
+\item \textbf{Community detection + evaluation.}
+Using the same synthetic network:
+\begin{itemize}
+  \item Run Louvain community detection and report:
+  \begin{enumerate}
+    \item the number of detected communities, and
+    \item the sizes of the communities (a small table is fine).
+  \end{enumerate}
+  \item Compute the Adjusted Rand Index (ARI) comparing Louvain communities to the known SBM ground-truth labels.
+  \item Create \textbf{one} visualization that communicates the community structure result (e.g., bar plot of community sizes).
+  \item In 5--8 sentences, interpret what the ARI means here and give one reason why community detection might split or merge true blocks (even when the data are generated from an SBM).
+\end{itemize}
+
+\item \textbf{Node classification: features-only baseline vs.\ GCN-style model.}
+Using the node features and ground-truth labels in the tutorial script:
+\begin{itemize}
+  \item Fit a features-only baseline model (logistic regression) and report validation and test accuracy.
+  \item Train the 2-layer GCN-style model from the tutorial and report validation and test accuracy.
+  \item Create a confusion table (or confusion matrix) for the test set for the GCN model (a table is sufficient).
+  \item In 6--10 sentences, compare the baseline and GCN results. Your discussion must include:
+  \begin{enumerate}
+    \item why the GCN can outperform the baseline in this setting,
+    \item one reason the baseline might be competitive (or even better) in some settings, and
+    \item one caution about interpreting ``high accuracy'' as scientific validity in social network prediction tasks.
+  \end{enumerate}
+\end{itemize}
+
+\item \textbf{Challenge Question (Optional --- if you finish early):}
+Run a small sensitivity analysis that varies either \textbf{network homophily} or \textbf{feature noise}, and compare community detection and prediction performance.
+\begin{itemize}
+  \item Choose \textbf{one} knob to vary:
+  \begin{enumerate}
+    \item increase/decrease the off-diagonal probabilities in the SBM matrix $P$ (more vs.\ less between-community mixing), \emph{or}
+    \item increase/decrease the feature noise standard deviation (\texttt{noise\_sd}).
+  \end{enumerate}
+  \item Run \textbf{three} settings (low / medium / high) and record:
+  \begin{enumerate}
+    \item Louvain ARI,
+    \item baseline logistic regression test accuracy,
+    \item GCN test accuracy.
+  \end{enumerate}
+  \item Present a small summary table (and optionally a plot) and interpret the pattern (5--10 sentences). In your interpretation, explain when network structure helps most and when it helps least.
+\end{itemize}
+
+\end{enumerate}
+
+\end{document}

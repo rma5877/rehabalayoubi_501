@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, graphicx, hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\usepackage[margin=1in]{geometry}
+
+\title{ Spatial Data, GIS, and Remote Sensing}
+\author{ }
+\date{ }
+
+
+
+\begin{document}
+\maketitle
+
+\noindent \textbf{Note on data.} This problem set uses (i) a free, georeferenced remote-sensing raster downloaded in the tutorial and (ii) \textbf{synthetic} vector labels (toy buildings and roads) created for teaching. The goal is to practice spatial data workflows (CRS, vector/raster integration) and a lightweight segmentation pipeline---not to make substantive claims about real-world land use.
+
+\section*{Conceptual Questions}
+Please write three to ten sentence explanations for each of the following questions. \textbf{You are only required to answer ONE of the two questions below.} \bigskip
+ 
+\begin{enumerate}
+
+\item Explain why coordinate reference systems (CRS) matter in social science GIS workflows. In your answer, describe one concrete error that can occur if layers are in mismatched CRSs (e.g., wrong distances/areas; failed spatial joins; misaligned rasterization), and explain how you would detect and fix the problem in practice.
+
+\item Remote-sensing and GIS data often involve multiple file types and processing steps (raster windows, vector overlays, rasterization, model training). Describe a reproducible pipeline architecture for such a project. In your answer, mention (i) how you would cache intermediate artifacts, (ii) how you would document transforms/CRS choices, and (iii) one strategy to reduce measurement error when building labels from imperfect spatial data.
+
+  \end{enumerate}
+
+
+\section*{Applied Exercises}
+Use the code in the week's code tutorial and the lecture slides to answer the following questions.\bigskip
+
+  \begin{enumerate}
+  \setcounter{enumi}{2}
+
+\item \textbf{Raster workflow: download, metadata, and windowing.}
+Using the provided Python tutorial script:
+\begin{itemize}
+  \item Download and open the georeferenced raster. Report key metadata: CRS, bounds, width/height, band count, dtype, and affine transform.
+  \item Extract a $256 \times 256$ window (patch) using \texttt{rasterio.windows.Window}. Plot the full raster and the patch.
+  \item Report the patch shape and compute its approximate bounding box in the raster CRS.
+  \item In 3--6 sentences, explain why windowing is useful for both spatial analysis and machine learning workflows.
+\end{itemize}
+
+\item \textbf{Vector workflow: GeoPandas, CRS transforms, and spatial join.}
+Using the synthetic vector geometries in the script:
+\begin{itemize}
+  \item Create the buildings GeoDataFrame (polygons) and roads GeoDataFrame (buffered line polygons), both in the raster CRS.
+  \item Transform both layers to WGS84 (\texttt{EPSG:4326}) and print the head of each transformed GeoDataFrame.
+  \item Generate random points in the patch bounds, then run a spatial join to determine which points fall within building polygons. Report the number (and share) of points that fall inside buildings.
+  \item Create one plot showing the patch extent with buildings, roads, and points overlaid (a simple matplotlib plot is fine).
+\end{itemize}
+
+\item \textbf{Rasterization + segmentation + panoptic-style output.}
+Using the tutorial workflow:
+\begin{itemize}
+  \item Rasterize the roads and buildings to create:
+  \begin{enumerate}
+    \item a semantic mask with classes \{0 background, 1 road, 2 building\}, and
+    \item an instance mask for buildings (IDs 1..K; 0 for not-building).
+  \end{enumerate}
+  \item Train the small encoder--decoder CNN on the patch to predict the semantic mask. Report the final training loss and pixel accuracy.
+  \item Post-process predicted building pixels using connected components to produce a ``panoptic-style'' output (stuff class + building instances). Report the number of predicted building instances.
+  \item Save (or show) a figure with three panels: raster patch, predicted semantic classes, and panoptic-style IDs.
+  \item In 6--10 sentences, discuss at least two limitations of this toy setup (e.g., synthetic labels, single-patch overfitting, no train/test split, simplistic instance extraction) and one improvement you would make to move toward a realistic remote-sensing pipeline.
+\end{itemize}
+
+\item \textbf{Challenge Question (Optional --- if you finish early):}
+Add one evaluation or robustness check beyond pixel accuracy.
+Choose \textbf{ONE} of the following options:
+\begin{enumerate}
+  \item Compute per-class Intersection-over-Union (IoU) for the semantic mask (background/road/building) and briefly interpret which class is hardest and why.
+  \item Run a small sensitivity analysis that varies one modelling knob (e.g., number of epochs, learning rate, window location) across \textbf{three} settings. Report how pixel accuracy and the number of predicted building instances change, and interpret the pattern (5--8 sentences).
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

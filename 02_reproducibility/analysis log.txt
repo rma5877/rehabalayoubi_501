@@ -1,0 +1,13 @@
+[2026-01-30 13:08:27] === START RUN === 
+[2026-01-30 13:08:29] Working directory: /Users/rehabalayoubi/Desktop/soda501/soda_501/02_reproducibility 
+[2026-01-30 13:08:32] Rows loaded: 95 
+[2026-01-30 13:08:33] Columns loaded: 5 
+[2026-01-30 13:08:39] Rows after filtering missing income: 95 
+[2026-01-30 13:08:43] Model 1 formula: income_numeric ~ education 
+[2026-01-30 13:08:43] Model 2 formula: income_numeric ~ education + age 
+[2026-01-30 13:08:43] Model 3 formula: income_numeric ~ education + age + sex 
+[2026-01-30 13:08:45] Wrote table: outputs/tables/regressions_income_dv.csv 
+[2026-01-30 13:08:46] Wrote summaries: outputs/tables/model_summaries.txt 
+[2026-01-30 13:08:49] Wrote figure: outputs/figures/income_plot.png 
+[2026-01-30 13:08:50] Wrote sessionInfo: outputs/session info.txt 
+[2026-01-30 13:08:50] === END RUN === 

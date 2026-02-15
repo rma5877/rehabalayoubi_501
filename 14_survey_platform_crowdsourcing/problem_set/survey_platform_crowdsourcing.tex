@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, graphicx, hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\usepackage[margin=1in]{geometry}
+
+\title{ Surveys, Platforms, and Crowdsourcing}
+\author{ }
+\date{ }
+
+
+
+\begin{document}
+\maketitle
+
+\section*{Conceptual Questions}
+Please write three to ten sentence explanations for each of the following questions. \textbf{You are only required to answer ONE of the two questions below.} \bigskip
+ 
+\begin{enumerate}
+
+\item Platform-based surveys (e.g., Prolific, MTurk, convenience pools) can generate measurement error in ways that differ from traditional survey modes. Identify two plausible sources of measurement error or bias in platform data and explain how you would detect each issue using diagnostics in the survey export (e.g., duration, attention checks, missingness patterns, straightlining, duplicate IDs).
+
+\item Missing data is not the same thing as ``random noise.'' Explain the difference between missing completely at random (MCAR), missing at random (MAR), and missing not at random (MNAR) in the context of survey platforms. Give one concrete example of how platform incentives or survey design could create MNAR missingness, and explain one implication for analysis.
+
+  \end{enumerate}
+
+
+\section*{Applied Exercises}
+Use the code in the week's code tutorial and the lecture slides to answer the following questions.\bigskip
+
+  \begin{enumerate}
+  \setcounter{enumi}{2}
+
+\item \textbf{Survey export: load + inspect.}
+Using the week's survey tutorial script, load a survey export (your own export or the provided toy example).
+\begin{itemize}
+  \item Print the dataset and use \texttt{glimpse()} to inspect variable types.
+  \item Identify at least \textbf{five} variables that typically appear in platform exports (e.g., respondent ID, start/end time, duration, platform ID, consent, attention check).
+  \item Briefly note (1--3 sentences) one potential cleaning issue you see immediately (e.g., missing-value strings, type mismatches, extra header rows).
+\end{itemize}
+
+\item \textbf{Cleaning: names, types, and missing values.}
+Extend the tutorial cleaning steps:
+\begin{itemize}
+  \item Standardize column names (e.g., \texttt{clean\_names()}).
+  \item Parse start/end timestamps into a time class (e.g., \texttt{ymd\_hms()}).
+  \item Convert at least \textbf{two} variables from strings to appropriate types (e.g., age to numeric; duration to minutes).
+  \item Recode at least \textbf{two} platform-style missing-value strings into \texttt{NA} (e.g., \texttt{""}, \texttt{"Prefer not to say"}).
+\end{itemize}
+
+\item \textbf{Codebook: document your data.}
+Create a codebook table (e.g., a \texttt{tibble}) with at least \textbf{10} rows, including columns:
+\begin{center}
+\texttt{variable} \quad \texttt{description} \quad \texttt{notes}
+\end{center}
+\begin{itemize}
+  \item Include both survey items and platform metadata variables.
+  \item Export the codebook to \texttt{outputs/week\_codebook.csv}.
+\end{itemize}
+
+\item \textbf{Labeling: variable labels + value labels.}
+Using the \texttt{labelled} package:
+\begin{itemize}
+  \item Add variable labels to at least \textbf{five} variables (e.g., \texttt{var\_label()}).
+  \item Create at least \textbf{one} numeric-coded variable with value labels (e.g., party ID coded as 1/2/3 with labels).
+  \item Print a small excerpt showing the labeled variable(s) so it is clear that labels are attached.
+\end{itemize}
+
+\item \textbf{Quality checks: flags + summary.}
+Implement the following checks (hard-coded thresholds are fine):
+\begin{itemize}
+  \item \textbf{Speeding:} flag respondents below a chosen duration threshold (e.g., $<$ 120 seconds).
+  \item \textbf{Attention check:} flag respondents who fail an attention-check item.
+  \item \textbf{Missingness:} compute each respondent's share missing across a set of key variables and flag high-missingness cases.
+  \item \textbf{Straightlining:} flag respondents who give identical responses across multiple grid items.
+\end{itemize}
+Then:
+\begin{itemize}
+  \item Create a one-row summary table of how many respondents are flagged by each rule.
+  \item Print a table that shows \texttt{response\_id} (or equivalent) and all flags for every respondent.
+\end{itemize}
+
+\item \textbf{Analysis-ready dataset: filter + save + visualize.}
+Using your quality flags:
+\begin{itemize}
+  \item Create a filtered dataset that excludes at least \textbf{non-consent}, \textbf{speeders}, \textbf{attention-failures}, and \textbf{high-missingness} cases.
+  \item Print the row count \textbf{before} and \textbf{after} filtering.
+  \item Save the cleaned dataset to \texttt{data\_processed/week\_survey\_clean.csv}.
+  \item Save at least \textbf{two} diagnostic plots (examples: duration histogram; missingness histogram; share flagged by platform) to the \texttt{figures/} folder.
+\end{itemize}
+
+\item \textbf{Challenge Question (Optional --- if you finish early):}
+Run a simple sensitivity analysis to show how results depend on quality-screening choices.
+\begin{itemize}
+  \item Choose \textbf{one} screening threshold to vary (e.g., speeding threshold or missingness threshold).
+  \item Recompute how many respondents are retained at \textbf{three} different threshold values.
+  \item Make a small table (and optionally a plot) summarizing how the retained sample changes.
+  \item In 3--6 sentences, explain what this implies about the credibility and robustness of platform survey inferences.
+\end{itemize}
+
+\end{enumerate}
+
+\end{document}

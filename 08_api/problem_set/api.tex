@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, graphicx, hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\usepackage[margin=1in]{geometry}
+
+\title{ APIs and Election Forecasting}
+\author{ }
+\date{ }
+
+
+
+\begin{document}
+\maketitle
+
+\section*{Conceptual Questions}
+Please write three to ten sentence explanations for each of the following questions. \textbf{You are only required to answer ONE of the two questions below.} \bigskip
+ 
+\begin{enumerate}
+
+\item In the social sciences, what are two advantages of collecting data via an API (instead of web scraping)? What are two limitations or risks (e.g., coverage bias, changing endpoints, rate limits, versioning, missingness)? Explain how you would document API-based data provenance so another researcher could replicate your dataset later.
+
+\item Why is API key management part of doing professional, reproducible data science? Explain (i) what can go wrong if keys are hard-coded and pushed to GitHub, and (ii) one concrete approach for storing keys locally (e.g., environment variables) while keeping your analysis reproducible for yourself and collaborators.
+
+  \end{enumerate}
+
+
+\section*{Applied Exercises}
+Use the code in the week's code tutorial and the lecture slides to answer the following questions.\bigskip
+
+  \begin{enumerate}
+  \setcounter{enumi}{2}
+
+\item \textbf{Create an API key and connect to the API.}
+This week you will use the \texttt{fredr} package, which requires a FRED API key.
+\begin{itemize}
+  \item Create a FRED API key.
+  \item Update the provided script so it reads your key from a local environment variable (recommended) rather than hard-coding it in the file.
+  \item Confirm your API call works by successfully downloading at least one FRED time series (e.g., unemployment, GDP, or CPI) for election years.
+\end{itemize}
+
+\item \textbf{Run the baseline forecaster (replicate).}
+Using the provided code (\texttt{api\_build\_model.r}), get the baseline pipeline running end-to-end on your machine.
+\begin{itemize}
+  \item If any file paths are absolute, modify them to use a \textbf{relative path} that will work inside your course project folder.
+  \item Produce at least one baseline output showing model predictions on held-out data (e.g., 2020), such as a printed table, summary statistics, or a map.
+\end{itemize}
+
+\item \textbf{Build a better out-of-sample forecaster.}
+Starting from the baseline, improve out-of-sample performance for election results that are not used to fit the model.
+\begin{itemize}
+  \item Define an explicit out-of-sample design (choose one):
+    \begin{enumerate}
+      \item Hold out the most recent election year in the dataset (e.g., train on years $< 2020$, test on 2020), \emph{or}
+      \item Do a ``leave-one-election-out'' evaluation (train on all but one election year; repeat).
+    \end{enumerate}
+  \item Implement \textbf{at least two} model improvements. Examples include:
+    \begin{itemize}
+      \item adding additional FRED indicators (via the API) and justifying them,
+      \item changing the functional form (interactions, nonlinear terms),
+      \item using regularization (ridge/lasso/elastic net),
+      \item switching model families (e.g., random forest, gradient boosting),
+      \item improving feature engineering (e.g., transforms, per-capita changes),
+      \item improving how you aggregate to a prediction target (national vs state).
+    \end{itemize}
+  \item Report performance \textbf{out-of-sample} using at least one quantitative metric (e.g., MAE, RMSE) and compare it to the baseline.
+\end{itemize}
+
+\item \textbf{Communicate the comparison.}
+Provide:
+\begin{itemize}
+  \item one table that compares baseline vs improved performance (out-of-sample), and
+  \item one figure that communicates model fit or errors (e.g., predicted vs actual; error by state; time series comparison).
+\end{itemize}
+
+\item \textbf{Challenge Question (Optional --- if you finish early):}
+
+\begin{enumerate}
+  \item \textbf{Forecast validation and ``small $n$'' in elections.}
+  Defend a position (8--12 sentences): Do we have enough realized election outcomes to validate a national election forecaster?
+  Discuss the trade-offs of treating forecasting as (i) national outcomes (one datapoint per election) versus (ii) state-level outcomes (many datapoints per election).
+  Explain what you would report as evidence that your model is ``working'' and what would still remain uncertain.
+
+  \item \textbf{API engineering + reproducibility challenge.}
+  Write a small wrapper function \texttt{get\_fred\_features(series\_ids, years)} that:
+  \begin{itemize}
+    \item downloads multiple FRED series via the API,
+    \item caches the raw results to disk (so repeated runs do not re-download),
+    \item gracefully handles API failures (e.g., \texttt{tryCatch} + informative messages).
+  \end{itemize}
+  Demonstrate it by adding \textbf{one new} economic series to your model and showing whether it helps out-of-sample performance.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

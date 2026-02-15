@@ -1,0 +1,112 @@
+<<<<<<< HEAD
+hw.R
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+=======
+###############################################################################
+# Python
+###############################################################################
+# Virtual environments
+.venv/
+venv/
+env/
+scr/
+.idea/
+data/
+data_raw/
+data_processed/
+figures/
+lecture_notes/
+textbook/
+
+# Bytecode / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+
+###############################################################################
+# R / RStudio
+###############################################################################
+.Rhistory
+.RData
+.Rproj.user/
+.Renv*
+renv/library/
+renv/staging/
+
+# Knitr / LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.tif
+
+
+###############################################################################
+# Quarto / R Markdown / Slides build folders
+###############################################################################
+*_files/
+*.html
+
+###############################################################################
+# Data / outputs (adjust to your preference)
+###############################################################################
+# If these are generated artifacts you don’t want in Git:
+# data/raw/
+# data/processed/
+# outputs/
+# lecture_notes/
+# figures/
+# src/
+# week01_slides_files/
+# week02_slides_files/
+# week03_slides_files/
+# week04_slides_files/
+# week05_slides_files/
+# week06_slides_files/
+# week07_slides_files/
+# week08_slides_files/
+# week09_slides_files/
+# week10_slides_files/
+# week11_slides_files/
+# week12_slides_files/
+# week13_slides_files/
+
+###############################################################################
+# Large files (GitHub blocks >100MB without LFS)
+###############################################################################
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+*.7z
+*.gz
+*.out
+*.aux
+
+###############################################################################
+# OS / editor junk
+###############################################################################
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VS Code / JetBrains
+.vscode/
+.idea/
+>>>>>>> a36e6612ecf89cd6d28593efc2a9954a81e2cc92
