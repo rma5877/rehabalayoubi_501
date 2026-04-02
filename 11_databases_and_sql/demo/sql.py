@@ -1,5 +1,9 @@
 ###############################################################################
-# SQL Tutorial in Python: SQLite + Campaign Finance (Simulated Data)
+####### CONTEPUAL QUESTION :  A database index is a structure that helps the 
+# database find rows faster by organizing data in a way that avoids scanning the entire table. 
+# This makes queries, especially those with filters or joins, much quicker. However, indexes take up extra disk space and can slow down inserts or updates because they must be maintained. For example, in the lab dataset, a query filtering participants by condition (e.g., WHERE condition = 'animal') would benefit from an index on the condition column.
+# homework code is at the end of the file after the main demo code. 
+#  SQL Tutorial in Python: SQLite + Campaign Finance (Simulated Data)
 # Author: Jared Edgerton
 # Date: date.today()
 #
@@ -47,6 +51,12 @@ from datetime import date, timedelta
 # Step 1: Connect to a database file
 # -----------------------------------------------------------------------------
 # If the file does not exist, SQLite creates it automatically.
+# Navigate to your project folder first
+#cd /Users/rehabalayoubi/Desktop/soda501/soda_501/11_databases_and_sql/demo/
+
+# Then run the script
+# python3 sql.py
+
 con = sqlite3.connect("campaign_finance.db")
 cur = con.cursor()
 
@@ -267,7 +277,7 @@ print(pd.read_sql_query("""
 #   (2) Run it with pandas.read_sql_query(query, con)
 #   (3) Print or plot the result
 #
-# SQL syntax checklist you’ll see repeatedly:
+# SQL syntax checklist you'll see repeatedly:
 # - SELECT: which columns to return
 # - FROM: which table to start from
 # - JOIN ... ON: how to combine tables
@@ -494,7 +504,133 @@ plt.show()
 
 print("\nSaved plot: contributions_by_party.png")
 
-# -----------------------------------------------------------------------------
-# Close the database connection
-# -----------------------------------------------------------------------------
+
+###############################################################################
+# HOMEWORK — Steps 3, 4, and 5
+###############################################################################
+
+# =============================================================================
+# STEP 3: Row counts + schema
+# =============================================================================
+
+print("\n" + "=" * 60)
+print("STEP 3 — ROW COUNTS (SELECT COUNT(*))")
+print("=" * 60)
+
+# Row counts for each table
+row_counts = pd.read_sql_query("""
+  SELECT 'candidates'   AS table_name, COUNT(*) AS row_count FROM candidates
+  UNION ALL
+  SELECT 'contributors' AS table_name, COUNT(*) AS row_count FROM contributors
+  UNION ALL
+  SELECT 'contributions' AS table_name, COUNT(*) AS row_count FROM contributions;
+""", con)
+
+print(row_counts.to_string(index=False))
+
+# Schema for each table using PRAGMA table_info
+print("\n" + "=" * 60)
+print("STEP 3 — SCHEMA (PRAGMA table_info)")
+print("=" * 60)
+
+for tbl in ("candidates", "contributors", "contributions"):
+    print(f"\n  Table: {tbl}")
+    schema = pd.read_sql_query(f"PRAGMA table_info({tbl});", con)
+    print(schema[["cid", "name", "type", "notnull", "pk"]].to_string(index=False))
+
+# =============================================================================
+# STEP 4: Join + aggregation — total contributions by party (amount > $1000)
+# =============================================================================
+
+print("\n" + "=" * 60)
+print("STEP 4 — JOIN + AGGREGATION")
+print("Total contributions by party where amount > $1,000")
+print("=" * 60)
+
+# Join contributions to candidates; filter amount > 1000; aggregate by party
+query_hw = """
+  SELECT
+    ca.party                          AS party,
+    ROUND(SUM(co.amount), 2)          AS total_amount,
+    COUNT(co.id)                      AS num_contributions
+  FROM contributions co
+  JOIN candidates ca
+    ON co.candidate_id = ca.id
+  WHERE co.amount > 1000
+  GROUP BY ca.party
+  ORDER BY total_amount DESC;
+"""
+hw_results = pd.read_sql_query(query_hw, con)
+
+print(hw_results.to_string(index=False))
+
+# Bar plot of total_amount by party
+party_colors = {"Democrat": "#1f77b4", "Republican": "#d62728", "Independent": "#2ca02c"}
+bar_colors = [party_colors.get(p, "#7f7f7f") for p in hw_results["party"]]
+
+fig, ax = plt.subplots(figsize=(7, 4))
+bars = ax.bar(hw_results["party"], hw_results["total_amount"],
+              color=bar_colors, edgecolor="white", linewidth=0.8)
+
+ax.set_title("Total Contributions by Party (amount > $1,000)", fontsize=13, pad=10)
+ax.set_xlabel("Party", fontsize=11)
+ax.set_ylabel("Total Amount ($)", fontsize=11)
+ax.yaxis.set_major_formatter(
+    plt.FuncFormatter(lambda x, _: f"${x/1_000_000:.1f}M")
+)
+ax.bar_label(bars,
+             labels=[f"${v/1_000_000:.2f}M\n(n={n:,})"
+                     for v, n in zip(hw_results["total_amount"], hw_results["num_contributions"])],
+             padding=4, fontsize=8)
+ax.spines[["top", "right"]].set_visible(False)
+ax.set_ylim(0, hw_results["total_amount"].max() * 1.18)
+plt.tight_layout()
+plt.savefig("hw_contributions_by_party.png", dpi=150)
+plt.show()
+print("\nBar plot saved → hw_contributions_by_party.png")
+
+# =============================================================================
+# STEP 5: Indexes + query plan
+# =============================================================================
+
+print("\n" + "=" * 60)
+print("STEP 5 — EXISTING INDEXES ON contributions")
+print("=" * 60)
+
+# Query sqlite_master to see all indexes on the contributions table
+existing_indexes = pd.read_sql_query("""
+  SELECT name, tbl_name, sql
+  FROM sqlite_master
+  WHERE type = 'index'
+    AND tbl_name = 'contributions'
+  ORDER BY name;
+""", con)
+
+print(existing_indexes.to_string(index=False))
+
+# EXPLAIN QUERY PLAN — filter by candidate_id and amount
+# The existing idx_contrib_candidate_id and idx_contrib_amount indexes
+# were created above in Step 6 of the original script.
+print("\n" + "=" * 60)
+print("STEP 5 — EXPLAIN QUERY PLAN")
+print("Query: contributions WHERE candidate_id = 5 AND amount > 1000")
+print("=" * 60)
+
+explain_sql = """
+  SELECT contributor_id, amount, date
+  FROM contributions
+  WHERE candidate_id = 5
+    AND amount > 1000;
+"""
+
+cur.execute(f"EXPLAIN QUERY PLAN {explain_sql}")
+plan_rows = cur.fetchall()
+plan_df = pd.DataFrame(plan_rows, columns=["id", "parent", "notused", "detail"])
+print(plan_df[["id", "detail"]].to_string(index=False))
+
+# Close the connection
 con.close()
+
+print("\n" + "=" * 60)
+print("Done.")
+print("=" * 60)
