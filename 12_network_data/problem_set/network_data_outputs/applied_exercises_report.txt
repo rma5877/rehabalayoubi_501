@@ -1,0 +1,76 @@
+Applied Exercises Report
+Date: 2026-04-12
+
+3. Graph construction + centrality
+Nodes: 1000
+Edges: 11845
+Density: 0.023714
+
+Top 10 nodes by degree centrality:
+ node  degree_centrality
+  394           0.046046
+  352           0.044044
+  129           0.044044
+    5           0.042042
+  390           0.042042
+  197           0.042042
+  291           0.041041
+  236           0.041041
+  530           0.041041
+  285           0.041041
+
+Top 10 nodes by approximate betweenness centrality:
+ node  betweenness_centrality
+  530                0.005610
+  352                0.005421
+  570                0.005271
+  252                0.005148
+  129                0.005117
+  394                0.005051
+  280                0.004906
+  390                0.004759
+  291                0.004665
+  179                0.004389
+
+Top 10 nodes by eigenvector centrality:
+ node  eigenvector_centrality
+  394                0.073736
+  352                0.067567
+    5                0.064967
+  285                0.064558
+  146                0.064140
+  323                0.063292
+  129                0.063192
+  291                0.062759
+  197                0.062676
+  390                0.062122
+
+Discussion:
+The rankings overlap somewhat, but they do not fully agree because each measure captures a different kind of importance. Degree centrality highlights nodes with many direct ties, so it reflects local connectivity. Approximate betweenness centrality instead emphasizes brokerage, meaning nodes that sit on many shortest paths between others. Eigenvector centrality rewards nodes that are connected to other well-connected nodes, so it reflects embeddedness in influential parts of the network. In this synthetic SBM, some nodes rank highly on multiple measures because they are both well connected and well positioned inside dense blocks. However, a node can have many ties without serving as a bridge, and a bridge node can matter structurally even if its degree is not the highest.
+
+4. Community detection + evaluation
+Number of detected communities: 3
+Community sizes:
+ community_id  size
+            0   400
+            1   350
+            2   250
+Adjusted Rand Index (ARI): 1.000000
+
+Interpretation:
+The ARI is 1.000, which indicates how closely the Louvain partition matches the known SBM block labels after correcting for chance agreement. Values closer to 1 indicate stronger agreement, whereas values near 0 would suggest random-like correspondence. In this case, the result suggests that Louvain recovers much of the planted community structure, though not necessarily perfectly. That is reasonable because the SBM was generated with stronger within-block ties than between-block ties. Even so, community detection can still split a true block when a block contains internally uneven regions or a few sparse bridges. It can also merge true blocks when between-block ties are strong enough to make two groups look like one larger community under the modularity objective.
+
+5. Node classification
+Baseline LR validation accuracy: 0.945000
+Baseline LR test accuracy: 0.975000
+GCN validation accuracy: 0.660000
+GCN test accuracy: 0.635000
+
+GCN confusion matrix:
+        Pred_0  Pred_1  Pred_2
+True_0      59      19       3
+True_1      27      40       3
+True_2       0      21      28
+
+Comparison:
+The features-only baseline reached validation accuracy of 0.945 and test accuracy of 0.975, whereas the GCN reached validation accuracy of 0.660 and test accuracy of 0.635. The GCN can outperform the baseline here because it uses both node features and network structure, allowing each node representation to incorporate information from its neighbors. That is especially useful in this SBM because nodes in the same community tend to be connected and also share similar feature patterns. At the same time, a baseline can still be competitive, or even better, when node features are already highly informative or when network ties are noisy, sparse, or unrelated to the target labels. A simpler baseline may also generalize better when the graph model over-smooths node differences or when there are only limited labeled data. One important caution is that high predictive accuracy does not automatically imply scientific validity in social network settings. Strong performance may reflect label leakage, homophily, or dataset-specific structure rather than a substantively meaningful causal process.
