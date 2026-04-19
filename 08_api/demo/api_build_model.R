@@ -22,8 +22,8 @@
 # Install (if needed) and load the necessary libraries.
 #
 # If you do NOT have these packages installed, run:
-# install.packages(c("plyr", "dplyr", "usdata", "fredr", "lubridate", "tidyr",
-#                    "maps", "ggplot2"))
+install.packages(c("plyr", "dplyr", "usdata", "fredr", "lubridate", "tidyr",
+                    "maps", "ggplot2"))
 
 library(plyr)      # Data manipulation (older package, still used in this script)
 library(dplyr)     # Data manipulation and transformation
@@ -85,7 +85,7 @@ vote_data <- vote_data %>%
 # IMPORTANT:
 # - You should NOT hard-code real API keys into scripts you share publicly.
 # - Replace the string below with your own key.
-fredr_set_key("YOUR_FRED_API_KEY_HERE")
+fredr_set_key("cf1d472a38a9076f842724a6554d61ee")
 
 # Identify election years in the vote dataset
 election_years <- sort(unique(vote_data$year))
@@ -405,3 +405,4 @@ ggplot(map_data, aes(long, lat, group = group, fill = vote_diff)) +
 # 5) Extension:
 #    - Build a new visualization for "close states" (vote_diff near 0).
 ###############################################################################
+

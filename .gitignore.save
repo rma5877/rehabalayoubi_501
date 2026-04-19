@@ -1,0 +1,17 @@
+
+renv/
+outputs/
+analysis_log.txt
+
+# Large files
+*.tar.gz
+*.zip
+*.RData
+
+# Very large CSV logs
+05_experiments/slides/data/raw/event_logs.csv
+05_experiments/demo/data/raw/event_logs.csv
+x
+^X
+git add outputs/Conceptual\ question.docx
+git commit -m "Add conceptual quest
