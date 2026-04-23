@@ -29,8 +29,8 @@
 # -----------------------------------------------------------------------------
 # Install (if needed) and load the necessary libraries.
 
-# install.packages(c("readr", "dplyr", "tidyr", "stringr", "ggplot2", "tibble",
-#                    "janitor", "lubridate", "labelled", "haven"))
+install.packages(c("readr", "dplyr", "tidyr", "stringr", "ggplot2", "tibble",
+                    "janitor", "lubridate", "labelled", "haven"))
 library(readr)
 library(dplyr)
 library(tidyr)
