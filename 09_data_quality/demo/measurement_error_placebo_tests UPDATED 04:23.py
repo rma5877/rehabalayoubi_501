@@ -1,9 +1,6 @@
 
 
 ## Measurement error occurs when a variable is observed with noise, so the measured value deviates from the true underlying value. If the error is in a predictor that is not a confounder, it typically causes attenuation bias—shrinking its estimated coefficient toward zero without biasing the treatment effect. But if the error is in a confounder, the model only partially controls for it, leaving residual confounding; this can bias the estimated treatment effect because some of the confounder’s influence is mistakenly attributed to the treatment.
-# measurement_error_assignment.py
-# Python script for Parts 3, 4, and 5 of the assignment
-# This script is written only; it is not being run here.
 
 import os
 import numpy as np
